@@ -341,7 +341,7 @@ endm
 
 ;************************** JUGABILIDAD **********************************
 
-verificarCoordenadas macro f1, col1, buffer, m1, m2, m3, tipoCoord
+verificarCoordenadas macro f1, col1, buffer, tipoCoord
 	LOCAL DO1, DO2, LETRA1, LETRA2, LETRA3, LETRA4, LETRA5, NUM1, NUM2, NUM3, NUM4, NUM5, ULTIMO, FIN
 
 	PUSH SI
@@ -722,7 +722,7 @@ Fri macro f, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 			POP SI
 endm
 
-findYAxis1 macro f1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+colocarXP macro f1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 	LOCAL F5, F4, F3, FIN, F22, F11
 	cmp f1, '1'
 	je F11
@@ -736,25 +736,26 @@ findYAxis1 macro f1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turn
 	je F5
 	jmp INGRESAR
 	F5:
-		findXAxis1 fila5, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		moverAbajo pos1, fila5, fila4, fila3, fila2, fila1
+		colocarYP fila5, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		je FIN
 	F4:
-		findXAxis1 fila4, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		colocarYP fila4, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		je FIN
 	F3:
-		findXAxis1 fila3, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		colocarYP fila3, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		je FIN
 	F22:
-		findXAxis1 fila2, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		colocarYP fila2, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		je FIN
 	F11:
-		findXAxis1 fila1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		colocarYP fila1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		je FIN
 	FIN:
 		
 endm
 
-findXAxis1 macro f, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+colocarYP macro f, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 	LOCAL VALIDACION1, CompX, CompO, M1, FIN, M2
 	PUSH SI
 	PUSH DX
@@ -776,7 +777,7 @@ findXAxis1 macro f, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		je M1;VALIDACION2
 
 		cmp f[si], 100b
-		jmp ERROR_SEL
+		je ERROR_SEL
 
 		jmp FIN
 
@@ -785,7 +786,7 @@ findXAxis1 macro f, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		je M2;VALIDACION2
 
 		cmp f[si], 001b
-		jmp ERROR_SEL
+		je ERROR_SEL
 
 		jmp FIN
 
@@ -803,7 +804,408 @@ findXAxis1 macro f, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		POP SI
 endm
 
+moverAbajo macro pos1, fila5, fila4, fila3, fila2, fila1
+	LOCAL VALIDACION1, VALIDACION2, VALIDACION3, VALIDACION4, CompX, CompO, M1, M2, M3, M4, M5, M6, M7, M8 , FIN
+	PUSH SI
+	PUSH DX
+	xor si, si
 
+	MOV DL, pos1
+	MOV DH, 0
+	MOV SI, DX
+
+	VALIDACION1:
+		cmp fila2[si], 001b
+		je M1
+
+		cmp fila2[si], 100b
+		je M2
+
+		jmp VALIDACION2
+	M1:
+		mov fila1[si], 001b
+		mov fila2[si], 000b
+		jmp VALIDACION2
+	M2: 
+		mov fila1[si], 100b
+		mov fila2[si], 000b
+		jmp VALIDACION2
+
+	VALIDACION2:
+		cmp fila3[si], 001b
+		je M3
+
+		cmp fila3[si], 100b
+		je M4
+		jmp VALIDACION3
+	M3:
+		mov fila2[si], 001b
+		mov fila3[si], 000b
+		jmp VALIDACION3
+	M4: 
+		mov fila2[si], 100b
+		mov fila3[si], 000b
+		jmp VALIDACION3
+
+	VALIDACION3:
+		cmp fila4[si], 001b
+		je M5
+
+		cmp fila4[si], 100b
+		je M6
+		jmp VALIDACION4
+	M5:
+		mov fila3[si], 001b
+		mov fila4[si], 000b
+		jmp VALIDACION4
+	M6: 
+		mov fila3[si], 100b
+		mov fila4[si], 000b
+		jmp VALIDACION4
+	VALIDACION4:
+		cmp fila5[si], 001b
+		je M7
+
+		cmp fila5[si], 100b
+		je M8
+
+		jmp FIN
+	M7:
+		mov fila4[si], 001b
+		mov fila5[si], 000b
+		jmp FIN
+	M8: 
+		mov fila4[si], 100b
+		mov fila5[si], 000b
+		jmp FIN
+	FIN:	 
+		POP DX
+		POP SI
+endm
+
+colocarXQ macro f1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+	LOCAL F5, F4, F3, FIN, F22, F11
+	cmp f1, '1'
+	je F11
+	cmp f1, '2'
+	je F22
+	cmp f1, '3'
+	je F3
+	cmp f1, '4'
+	je F4
+	cmp f1, '5'
+	je F5
+	jmp INGRESAR
+	F5:
+		colocarYQ fila5, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F4:
+		colocarYQ fila4, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F3:
+		colocarYQ fila3, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F22:
+		colocarYQ fila2, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F11:
+		moverArriba pos1, fila5, fila4, fila3, fila2, fila1
+		colocarYQ fila1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	FIN:
+		
+endm
+
+colocarYQ macro f, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+	LOCAL VALIDACION1, CompX, CompO, M1, FIN, M2
+	PUSH SI
+	PUSH DX
+	xor si, si
+
+	MOV DL, pos1
+	MOV DH, 0
+	MOV SI, DX
+
+	VALIDACION1:
+		cmp turno, 0b
+		je CompX
+
+		cmp turno, 1b
+		je CompO
+
+	CompX:
+		cmp f[si], 000b
+		je M1;VALIDACION2
+
+		cmp f[si], 100b
+		je ERROR_SEL
+
+		jmp FIN
+
+	CompO: 
+		cmp f[si], 000b
+		je M2;VALIDACION2
+
+		cmp f[si], 001b
+		je ERROR_SEL
+
+		jmp FIN
+
+	M1:
+		mov f[si], 001b
+		jmp FIN;M2
+
+	M2: 
+		mov f[si], 100b
+		jmp FIN
+
+	FIN:	
+		;MENSAJE
+		POP DX
+		POP SI
+endm
+
+moverArriba macro pos1, fila5, fila4, fila3, fila2, fila1
+	LOCAL VALIDACION1, VALIDACION2, VALIDACION3, VALIDACION4, CompX, CompO, M1, M2, M3, M4, M5, M6, M7, M8 , FIN
+	PUSH SI
+	PUSH DX
+	xor si, si
+
+	MOV DL, pos1
+	MOV DH, 0
+	MOV SI, DX
+
+	VALIDACION1:
+		cmp fila4[si], 001b
+		je M1
+
+		cmp fila4[si], 100b
+		je M2
+
+		jmp VALIDACION2
+	M1:
+		mov fila5[si], 001b
+		mov fila4[si], 000b
+		jmp VALIDACION2
+	M2: 
+		mov fila5[si], 100b
+		mov fila4[si], 000b
+		jmp VALIDACION2
+
+	VALIDACION2:
+		cmp fila3[si], 001b
+		je M3
+
+		cmp fila3[si], 100b
+		je M4
+		jmp VALIDACION3
+	M3:
+		mov fila4[si], 001b
+		mov fila3[si], 000b
+		jmp VALIDACION3
+	M4: 
+		mov fila4[si], 100b
+		mov fila3[si], 000b
+		jmp VALIDACION3
+
+	VALIDACION3:
+		cmp fila2[si], 001b
+		je M5
+
+		cmp fila2[si], 100b
+		je M6
+		jmp VALIDACION4
+	M5:
+		mov fila3[si], 001b
+		mov fila2[si], 000b
+		jmp VALIDACION4
+	M6: 
+		mov fila3[si], 100b
+		mov fila2[si], 000b
+		jmp VALIDACION4
+	VALIDACION4:
+		cmp fila1[si], 001b
+		je M7
+
+		cmp fila1[si], 100b
+		je M8
+
+		jmp FIN
+	M7:
+		mov fila2[si], 001b
+		mov fila1[si], 000b
+		jmp FIN
+	M8: 
+		mov fila2[si], 100b
+		mov fila1[si], 000b
+		jmp FIN
+	FIN:	 
+		POP DX
+		POP SI
+endm
+
+colocarXR macro f1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+	LOCAL F5, F4, F3, FIN, F22, F11
+	cmp f1, '1'
+	je F11
+	cmp f1, '2'
+	je F22
+	cmp f1, '3'
+	je F3
+	cmp f1, '4'
+	je F4
+	cmp f1, '5'
+	je F5
+	jmp INGRESAR
+	F5:
+		colocarYR fila5, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F4:
+		colocarYR fila4, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F3:
+		colocarYR fila3, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F22:
+		colocarYR fila2, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F11:
+		colocarYR fila1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	FIN:
+		
+endm
+
+colocarYR macro f, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+	LOCAL VALIDACION1, CompX, CompO, M1, FIN, M2
+	PUSH SI
+	PUSH DX
+	xor si, si
+
+	MOV DL, pos1
+	MOV DH, 0
+	MOV SI, DX
+
+	VALIDACION1:
+		cmp turno, 0b
+		je CompX
+
+		cmp turno, 1b
+		je CompO
+
+	CompX:
+		cmp f[si], 000b
+		je M1;VALIDACION2
+
+		cmp f[si], 100b
+		je ERROR_SEL
+
+		jmp FIN
+
+	CompO: 
+		cmp f[si], 000b
+		je M2;VALIDACION2
+
+		cmp f[si], 001b
+		je ERROR_SEL
+
+		jmp FIN
+
+	M1:
+		mov f[si], 001b
+		jmp FIN;M2
+
+	M2: 
+		mov f[si], 100b
+		jmp FIN
+
+	FIN:	
+		;MENSAJE
+		POP DX
+		POP SI
+endm
+
+colocarXRI macro f1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+	LOCAL F5, F4, F3, FIN, F22, F11
+	cmp f1, '1'
+	je F11
+	cmp f1, '2'
+	je F22
+	cmp f1, '3'
+	je F3
+	cmp f1, '4'
+	je F4
+	cmp f1, '5'
+	je F5
+	jmp INGRESAR
+	F5:
+		colocarYRI fila5, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F4:
+		colocarYRI fila4, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F3:
+		colocarYRI fila3, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F22:
+		colocarYRI fila2, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	F11:
+		colocarYRI fila1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		je FIN
+	FIN:
+		
+endm
+
+colocarYRI macro f, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+	LOCAL VALIDACION1, CompX, CompO, M1, FIN, M2
+	PUSH SI
+	PUSH DX
+	xor si, si
+
+	MOV DL, pos1
+	MOV DH, 0
+	MOV SI, DX
+
+	VALIDACION1:
+		cmp turno, 0b
+		je CompX
+
+		cmp turno, 1b
+		je CompO
+
+	CompX:
+		cmp f[si], 000b
+		je M1;VALIDACION2
+
+		cmp f[si], 100b
+		je ERROR_SEL
+
+		jmp FIN
+
+	CompO: 
+		cmp f[si], 000b
+		je M2;VALIDACION2
+
+		cmp f[si], 001b
+		je ERROR_SEL
+
+		jmp FIN
+
+	M1:
+		mov f[si], 001b
+		jmp FIN;M2
+
+	M2: 
+		mov f[si], 100b
+		jmp FIN
+
+	FIN:	
+		;MENSAJE
+		POP DX
+		POP SI
+endm
+ 
 ;******************* MACROS PARA COMPARACION DE COMANDOS ****************
 
 comparacion1 macro comandoE, buffer

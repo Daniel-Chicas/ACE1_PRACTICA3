@@ -1,7 +1,4 @@
-;================================= INCLUYO MACROS =================================
 include macros.asm
-
-;================================= TIPO DE EJECUTABLE =================================
 .MODEL small 
 .STACK 
 
@@ -48,8 +45,7 @@ include macros.asm
 	turno2 db 0ah, 0dh, ' > Turno Jugador 2: ', '$'
 	saltoLinea db 0ah, 0dh, '$'
 	salto db 0ah, 0dh, 00h
-;000b->VACIO 	001b->FX 	100b->FO	010b->P		011b->Q		101b->R 
-	;1100b fichaPb    1101b fichaRIb       1111b fichaRb     1110b fichaQb
+;000b->VACIO 	001b->FX 	100b->FO	010b->P		011b->Q		101b->R  
 
 	fila6 db 1100b, 1100b, 1100b, 1100b, 1100b, 1100b
 	fila5 db 1101b, 000b, 000b, 000b, 000b, 000b, 1111b
@@ -75,16 +71,12 @@ include macros.asm
 	f2 db 1 dup('$') 
 	pos2 db 0b
 
+	aux db 0b
+
 	separadorPC db ';'
-	separadorComa db ','
-	temp db '$'
-	bin db 000b
-	tipoCoord db 0b
-	filaSelec1 db 8 dup(000b)
-	division db '---------------------------------', '$' 
-	msg_coord1 db '-- Casilla Destino --', 10,13, '$'
-	msg_coord2 db '-- Casilla Fuente, Destino --', 10,13, '$'
-	msg_movimiento db '-- Movimiento Realizado --', 10,13, '$'
+	separadorComa db ',' 
+	tipoCoord db 0b 
+	division db '---------------------------------', '$'    
 	msg_errorC db '-- Atencion, Coordenadas Erroneas --', 10,13, '$'
 	msg_PosOcupada db 0ah,0dh,'-------- Esta ficha ya fue ocupada por el contrincante --------','$' 
 	msg_Orilla db 0ah, 0dh, '-------- Solo se pueden seleccionar fichas posicionadas en el perimetro del cuadrado --------', '$'
@@ -104,10 +96,6 @@ include macros.asm
 	msmError4 db 0ah,0dh,'Error al Escribir archivo','$'
 
 ;VARIABLES DE CARGA DEL JUEGO
-	m1 db 0ah, 0dh, '-------- 1 --------', '$'
-	m2 db 0ah, 0dh, '-------- 2 --------', '$'
-	m3 db 0ah, 0dh, '-------- 3 --------', '$'
-
 	char0 db 	'0'
 	char1 db 	'X'
 	char2 db 	'O'
@@ -203,7 +191,7 @@ main proc
 		comparacion1 comandoExit, bufferLectura
 		comparacion2 comandoSave, bufferLectura
 		comparacion3 comandoShow, bufferLectura
-		verificarCoordenadas f1, col1, bufferLectura, m1, m2, m3, tipoCoord
+		verificarCoordenadas f1, col1, bufferLectura, tipoCoord
 		validarOrilla f1, col1
 		obtenerPos col1, pos1
 		opcionesMovimiento f1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
@@ -235,7 +223,7 @@ main proc
 		comparacion1 comandoExit, bufferLectura
 		comparacion2 comandoSave, bufferLectura
 		comparacion3 comandoShow, bufferLectura
-		verificarCoordenadas f1, col1, bufferLectura, m1, m2, m3, tipoCoord
+		verificarCoordenadas f1, col1, bufferLectura, tipoCoord
 		validarOrilla f1, col1
 		obtenerPos col1, pos1
 		opcionesMovimiento f1, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
@@ -262,22 +250,22 @@ main proc
 
 	INSERTARP:
 		mov f2, '5'
-		findYAxis1 f2, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		colocarXP f2, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		jmp CAMBIAR_TURNO
 
 	INSERTARQ:
 		mov f2, '1'
-		findYAxis1 f2, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		colocarXQ f2, pos1, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		jmp CAMBIAR_TURNO
 
 	INSERTARR:
 		mov pos2, 101b
-		findYAxis1 f1, pos2, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		colocarXR f1, pos2, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		jmp CAMBIAR_TURNO
 
 	INSERTARRI:
 		mov pos2, 001b
-		findYAxis1 f1, pos2, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
+		colocarXRI f1, pos2, fila6, fila5, fila4, fila3, fila2, fila1, fila7, turno
 		jmp CAMBIAR_TURNO
 
 
